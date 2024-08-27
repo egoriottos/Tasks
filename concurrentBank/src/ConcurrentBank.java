@@ -5,7 +5,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConcurrentBank {
     private Map<Integer, BankAccount> accountMap = new HashMap<>();
-    private Lock lock = new ReentrantLock();
     private int accountNumber = 1;
 
     public Lock getLock() {
