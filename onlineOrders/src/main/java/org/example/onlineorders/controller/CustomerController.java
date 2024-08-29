@@ -18,9 +18,14 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<String> createCustomer(@RequestBody String customerJson) throws JsonProcessingException {
+    public ResponseEntity<String> createCustomer(@RequestBody String customerJson)  {
         Customer customer = customerService.create(customerJson);
-        String response = new ObjectMapper().writeValueAsString(customer);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(customer);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseEntity.ok(response);
     }

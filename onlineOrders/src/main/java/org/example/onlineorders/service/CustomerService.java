@@ -13,8 +13,13 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ObjectMapper objectMapper;
 
-    public Customer create(String customer) throws JsonProcessingException {
-        Customer customer1 = objectMapper.readValue(customer, Customer.class);
+    public Customer create(String customer) {
+        Customer customer1 = null;
+        try {
+            customer1 = objectMapper.readValue(customer, Customer.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         Customer newCustomer = Customer.builder()
                 .phone(customer1.getPhone())
                 .email(customer1.getEmail())

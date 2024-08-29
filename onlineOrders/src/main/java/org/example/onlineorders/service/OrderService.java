@@ -19,8 +19,13 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final ObjectMapper objectMapper;
 
-    public Order createOrder(String order, Long customerId) throws JsonProcessingException {
-        Order orderObj = objectMapper.readValue(order, Order.class);
+    public Order createOrder(String order, Long customerId)  {
+        Order orderObj = null;
+        try {
+            orderObj = objectMapper.readValue(order, Order.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         Order newOrder = Order.builder()
                 .orderDate(LocalDateTime.now())
                 .status(orderObj.getStatus())

@@ -15,15 +15,25 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestBody String order,@RequestParam Long id) throws JsonProcessingException {
+    public ResponseEntity<String> createOrder(@RequestBody String order,@RequestParam Long id) {
         Order order1 =orderService.createOrder(order,id);
-        String response = new ObjectMapper().writeValueAsString(order1);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(order1);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
     @GetMapping("/find/{id}")
-    public ResponseEntity<String> findOrder(@PathVariable Long id) throws JsonProcessingException {
+    public ResponseEntity<String> findOrder(@PathVariable Long id) {
         Order order = orderService.findOrderById(id);
-        String response = new ObjectMapper().writeValueAsString(order);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(order);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
 }

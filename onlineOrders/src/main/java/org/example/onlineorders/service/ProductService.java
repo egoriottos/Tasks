@@ -20,8 +20,13 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product create(String product) throws JsonProcessingException {
-        Product productJson = objectMapper.readValue(product, Product.class);
+    public Product create(String product) {
+        Product productJson = null;
+        try {
+            productJson = objectMapper.readValue(product, Product.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         Product newProduct = Product.builder()
                 .name(productJson.getName())
                 .price(productJson.getPrice())
@@ -35,11 +40,18 @@ public class ProductService {
     public Product findById(Long id) {
         return productRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
+
     public Product findByName(String name) {
         return productRepository.findByName(name);
     }
-    public Product update(Long id,String product) throws JsonProcessingException {
-        Product jsonObj = objectMapper.readValue(product, Product.class);
+
+    public Product update(Long id, String product) {
+        Product jsonObj = null;
+        try {
+            jsonObj = objectMapper.readValue(product, Product.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         Product oldProduct = findById(id);
         oldProduct.setName(jsonObj.getName());
         oldProduct.setPrice(jsonObj.getPrice());
@@ -48,6 +60,7 @@ public class ProductService {
         productRepository.save(oldProduct);
         return oldProduct;
     }
+
     public void delete(Long id) {
         productRepository.deleteById(id);
     }

@@ -29,29 +29,49 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProduct(@RequestBody String product) throws JsonProcessingException {
+    public ResponseEntity<String> createProduct(@RequestBody String product) {
         Product product1 = productService.create(product);
-        String response = new ObjectMapper().writeValueAsString(product1);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(product1);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<String> getProductById(@PathVariable Long id) throws JsonProcessingException {
+    public ResponseEntity<String> getProductById(@PathVariable Long id)  {
         Product product1 = productService.findById(id);
-        String response = new ObjectMapper().writeValueAsString(product1);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(product1);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
     @GetMapping("/name/{name}")
-    public ResponseEntity<String> getProductByName(@PathVariable String name) throws JsonProcessingException {
+    public ResponseEntity<String> getProductByName(@PathVariable String name) {
         Product product1 = productService.findByName(name);
-        String response = new ObjectMapper().writeValueAsString(product1);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(product1);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody String product) throws JsonProcessingException {
+    public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody String product) {
         Product product1 = productService.update(id, product);
-        String response = new ObjectMapper().writeValueAsString(product1);
+        String response = null;
+        try {
+            response = new ObjectMapper().writeValueAsString(product1);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(response);
     }
 
