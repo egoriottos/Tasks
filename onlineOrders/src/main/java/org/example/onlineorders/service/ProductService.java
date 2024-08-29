@@ -1,5 +1,7 @@
 package org.example.onlineorders.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.onlineorders.entity.Product;
@@ -12,17 +14,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ObjectMapper objectMapper;
 
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
-    public Product create(Product product) {
+    public Product create(String product) throws JsonProcessingException {
+        Product productJson = objectMapper.readValue(product, Product.class);
         Product newProduct = Product.builder()
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .quantityInStock(product.getQuantityInStock())
+                .name(productJson.getName())
+                .price(productJson.getPrice())
+                .description(productJson.getDescription())
+                .quantityInStock(productJson.getQuantityInStock())
                 .build();
         productRepository.save(newProduct);
         return newProduct;
@@ -34,13 +38,15 @@ public class ProductService {
     public Product findByName(String name) {
         return productRepository.findByName(name);
     }
-    public void update(Long id,Product product) {
+    public Product update(Long id,String product) throws JsonProcessingException {
+        Product jsonObj = objectMapper.readValue(product, Product.class);
         Product oldProduct = findById(id);
-        oldProduct.setName(product.getName());
-        oldProduct.setPrice(product.getPrice());
-        oldProduct.setDescription(product.getDescription());
-        oldProduct.setQuantityInStock(product.getQuantityInStock());
+        oldProduct.setName(jsonObj.getName());
+        oldProduct.setPrice(jsonObj.getPrice());
+        oldProduct.setDescription(jsonObj.getDescription());
+        oldProduct.setQuantityInStock(jsonObj.getQuantityInStock());
         productRepository.save(oldProduct);
+        return oldProduct;
     }
     public void delete(Long id) {
         productRepository.deleteById(id);

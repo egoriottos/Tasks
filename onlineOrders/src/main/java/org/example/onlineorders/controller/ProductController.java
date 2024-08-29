@@ -1,11 +1,14 @@
 package org.example.onlineorders.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.onlineorders.entity.Product;
 import org.example.onlineorders.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,28 +18,41 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<List<String>> getAllProducts() throws JsonProcessingException {
+        List<Product> products = productService.findAll();
+        List<String> productNames = new ArrayList<>();
+        for (Product product : products) {
+            String response = new ObjectMapper().writeValueAsString(product);
+            productNames.add(response);
+        }
+        return ResponseEntity.ok(productNames);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.create(product));
+    public ResponseEntity<String> createProduct(@RequestBody String product) throws JsonProcessingException {
+        Product product1 = productService.create(product);
+        String response = new ObjectMapper().writeValueAsString(product1);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.findById(id));
+    public ResponseEntity<String> getProductById(@PathVariable Long id) throws JsonProcessingException {
+        Product product1 = productService.findById(id);
+        String response = new ObjectMapper().writeValueAsString(product1);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/name/{name}")
-    public ResponseEntity<Product> getProductByName(@PathVariable String name) {
-        return ResponseEntity.ok(productService.findByName(name));
+    public ResponseEntity<String> getProductByName(@PathVariable String name) throws JsonProcessingException {
+        Product product1 = productService.findByName(name);
+        String response = new ObjectMapper().writeValueAsString(product1);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        productService.update(id, product);
-        return ResponseEntity.ok("Product updated");
+    public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody String product) throws JsonProcessingException {
+        Product product1 = productService.update(id, product);
+        String response = new ObjectMapper().writeValueAsString(product1);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete/{id}")

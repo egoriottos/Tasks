@@ -1,5 +1,7 @@
 package org.example.onlineorders.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.onlineorders.entity.Customer;
 import org.example.onlineorders.service.CustomerService;
@@ -16,7 +18,10 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return ResponseEntity.ok(customerService.create(customer));
+    public ResponseEntity<String> createCustomer(@RequestBody String customerJson) throws JsonProcessingException {
+        Customer customer = customerService.create(customerJson);
+        String response = new ObjectMapper().writeValueAsString(customer);
+
+        return ResponseEntity.ok(response);
     }
 }

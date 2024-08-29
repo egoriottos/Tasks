@@ -1,5 +1,7 @@
 package org.example.onlineorders.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.onlineorders.entity.Order;
 import org.example.onlineorders.entity.Product;
@@ -15,15 +17,17 @@ import java.time.LocalDateTime;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final ObjectMapper objectMapper;
 
-    public Order createOrder(Order order,Long customerId) {
+    public Order createOrder(String order, Long customerId) throws JsonProcessingException {
+        Order orderObj = objectMapper.readValue(order, Order.class);
         Order newOrder = Order.builder()
                 .orderDate(LocalDateTime.now())
-                .status(order.getStatus())
-                .shippingAddress(order.getShippingAddress())
-                .products(order.getProducts())
+                .status(orderObj.getStatus())
+                .shippingAddress(orderObj.getShippingAddress())
+                .products(orderObj.getProducts())
                 .customer(customerRepository.findById(customerId).orElse(null))
-                .totalPrice(getTotalPrice(order))
+                .totalPrice(getTotalPrice(orderObj))
                 .build();
         orderRepository.save(newOrder);
         return newOrder;
@@ -32,9 +36,10 @@ public class OrderService {
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId).orElse(null);
     }
+
     public BigDecimal getTotalPrice(Order order) {
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for(Product product : order.getProducts()) {
+        for (Product product : order.getProducts()) {
             totalPrice = totalPrice.add(product.getPrice());
         }
         return totalPrice;
